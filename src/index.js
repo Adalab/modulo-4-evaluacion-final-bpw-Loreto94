@@ -23,7 +23,6 @@ server.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)
 })
 
-//Endpoints
 server.get("/api/friends", async (req, res) => {
     const connection = await getDBConnection();
     const sqlQuery = "SELECT * FROM characters";
@@ -40,16 +39,25 @@ server.get("/api/friends", async (req, res) => {
 server.post("/api/newCharacter", async (req, res) => {
     const connection = await getDBConnection();
     const { name, age } = req.body;
-    
-    const sqlQuery = "INSERT INTO characters (name, age) VALUES (?, ?)";
-    const [result] = await connection.query(sqlQuery, [
-        name,
-        age
-    ])
-    connection.end();
-    res.status(201).json({
-        success: true
-    });
+
+    if (!name || !age) {
+        res.status(404).json({
+            success: false,
+            message: "Check the params and use the correct name"
+        })
+    } else {
+        const sqlQuery = "INSERT INTO characters (name, age) VALUES (?, ?)";
+        const [result] = await connection.query(sqlQuery, [
+            name,
+            age
+        ])
+        
+        connection.end();
+        
+        res.status(201).json({
+            success: true
+        });
+    }
 })
 
 server.put("/api/character/:id", async (req, res) => {
