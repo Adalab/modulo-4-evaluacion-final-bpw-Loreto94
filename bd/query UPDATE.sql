@@ -1,0 +1,1 @@
+UPDATE characters SET name = "Joey Tribbiani" WHERE id = 4;
